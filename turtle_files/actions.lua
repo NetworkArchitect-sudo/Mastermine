@@ -723,6 +723,41 @@ function fastest_route(area, pos, fac, end_locations)
 end
 
 
+function excavate_box(length, width, height)
+    length = length or 1
+    width = width or 1
+    height = height or 1
+
+    for h = 1, height do
+        for w = 1, width do
+            for l = 1, length - 1 do
+                if not safedig('forward') then return false end
+                if not forward() then return false end
+                if not clear_gravity_blocks() then return false end
+            end
+            if w < width then
+                local turn = (w % 2 == 1) and 'right' or 'left'
+                if not go(turn) then return false end
+                if not safedig('forward') then return false end
+                if not forward() then return false end
+                if not clear_gravity_blocks() then return false end
+                if not go(turn) then return false end
+            end
+        end
+        if h < height then
+            if not safedig('down') then return false end
+            if not down() then return false end
+            if not clear_gravity_blocks() then return false end
+            if width % 2 == 0 then
+                if not go('right') then return false end
+                if not go('right') then return false end
+            end
+        end
+    end
+    return true
+end
+
+
 function mine_vein(direction)
     if not face(direction) then return false end
     
